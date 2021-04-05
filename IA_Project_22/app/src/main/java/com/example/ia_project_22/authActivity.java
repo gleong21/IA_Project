@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -17,6 +18,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInApi;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -39,6 +41,8 @@ public class authActivity extends AppCompatActivity implements GoogleApiClient.O
     private GoogleSignInClient mGoogleSignInClient;
     private static final int RC_SIGN_IN = 9001;
     private GoogleApiClient googleApiClient;
+    private SignInButton signInButton;
+    private TextView textOne;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -61,6 +65,25 @@ public class authActivity extends AppCompatActivity implements GoogleApiClient.O
 
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        signInButton = (SignInButton) findViewById(R.id.sign_in_button);
+        signInButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                signinWithGoogle();
+            }
+        });
+
+        textOne = findViewById(R.id.textView);
+        textOne.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+
+                updateUIOne(mAuth.getCurrentUser());
+
+            }
+        });
 
     }
 
@@ -131,14 +154,10 @@ public class authActivity extends AppCompatActivity implements GoogleApiClient.O
         }
     }
 
-    public void onClickOne(View v)
+    public void onClickOne(View view)
     {
-        System.out.println("HELLLLLO");
-
-                signinWithGoogle();
-
-
-        }
+        signinWithGoogle();
+    }
 
     private void signinWithGoogle()
     {
@@ -195,6 +214,16 @@ public class authActivity extends AppCompatActivity implements GoogleApiClient.O
 
         }
 
+    }
+
+    public void updateUIOne(FirebaseUser currentUser)
+    {
+        if (currentUser != null)
+        {
+            Intent intent = new Intent(this, signUpActivity.class);
+            startActivity(intent);
+
+        }
     }
 
     @Override
