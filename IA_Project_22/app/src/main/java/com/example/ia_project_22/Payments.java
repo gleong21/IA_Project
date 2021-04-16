@@ -1,5 +1,7 @@
 package com.example.ia_project_22;
 
+import android.text.Editable;
+
 public class Payments
 {
     String id;
@@ -12,4 +14,6 @@ public class Payments
         this.name = name;
         this.amount = amount;
     }
+
+
 }

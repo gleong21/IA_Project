@@ -194,6 +194,9 @@ public class authActivity extends AppCompatActivity implements GoogleApiClient.O
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("TAG", "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
+                            User newUser = new User(mAuth.getUid(), mAuth.getCurrentUser().getEmail());
+                            firestore.collection("Users")
+                                    .document(mAuth.getCurrentUser().getUid()).set(newUser);
                             updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
@@ -209,7 +212,7 @@ public class authActivity extends AppCompatActivity implements GoogleApiClient.O
     {
         if (currentUser != null)
         {
-            Intent intent = new Intent(this, MainActivity.class);
+            Intent intent = new Intent(this, AddSubActivity.class);
             startActivity(intent);
 
         }
