@@ -53,6 +53,10 @@ public class authActivity extends AppCompatActivity implements GoogleApiClient.O
         passwordField = findViewById(R.id.editPasswordView);
         mAuth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
+        if (mAuth.getCurrentUser() != null)
+        {
+            updateUI(mAuth.getCurrentUser());
+        }
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
