@@ -84,9 +84,6 @@ public class DateActivity extends AppCompatActivity
 
     public void toastToUser()
     {
-        Toast messageToUser = Toast.makeText(getApplicationContext(), "Capacity input is invalied",
-                Toast.LENGTH_LONG);
-        messageToUser.show();
         System.out.println("hello");
     }
 }

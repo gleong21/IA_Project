@@ -7,7 +7,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +43,7 @@ public class AddSubActivity extends AppCompatActivity
     ArrayList<Payments> secondArrayPay;
     ArrayList<Payments> paymentsList;
 
+
     int curNum = 0;
 
 
@@ -53,6 +57,10 @@ public class AddSubActivity extends AppCompatActivity
         amount = findViewById(R.id.amount);
         firestoreRef = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
+
+
+
+        paymentsList = new ArrayList<>();
 
         yearOne = getIntent().getStringExtra("year");
         monthOne = getIntent().getStringExtra("month");
@@ -112,6 +120,13 @@ public class AddSubActivity extends AppCompatActivity
 
     }
 
+    public void gotoBills(View V)
+    {
+        Intent intent = new Intent(this, AllBillActivity.class);
+
+        startActivity(intent);
+    }
+
     public void writeData(View v)
     {
         if(yearOne == null)
@@ -157,4 +172,6 @@ public class AddSubActivity extends AppCompatActivity
 
         startActivity(intent);
     }
+
+
 }
