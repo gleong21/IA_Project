@@ -2,13 +2,17 @@ package com.example.ia_project_22;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -22,9 +26,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
-public class AddSubActivity extends AppCompatActivity
+public class AddSubActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, AdapterView.OnItemSelectedListener
 {
 
     int year;
@@ -40,11 +46,11 @@ public class AddSubActivity extends AppCompatActivity
     public FirebaseAuth mAuth;
     public FirebaseUser mUser;
     public FirebaseFirestore firestoreRef;
-    ArrayList<Payments> secondArrayPay;
     ArrayList<Payments> paymentsList;
-
-
     int curNum = 0;
+    String currentPayment;
+    String currentPaymentOne;
+    ArrayList<Payments> subList;
 
 
     @Override
@@ -52,19 +58,25 @@ public class AddSubActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_sub);
-        yearView = findViewById(R.id.yearOne);
         name = findViewById(R.id.name);
         amount = findViewById(R.id.amount);
         firestoreRef = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
+        Button button = findViewById(R.id.chooseDate);
+        button.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                DialogFragment datePicker = new calendar();
+                datePicker.show(getSupportFragmentManager(), "date picker");
+
+            }
+        });
 
 
 
         paymentsList = new ArrayList<>();
-
-        yearOne = getIntent().getStringExtra("year");
-        monthOne = getIntent().getStringExtra("month");
-        dateOne = getIntent().getStringExtra("date");
 
 
 
@@ -73,6 +85,12 @@ public class AddSubActivity extends AppCompatActivity
 
             yearView.setText(monthOne);
         }
+
+        Spinner spinner = findViewById(R.id.spinner2);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.paymentPeriod, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(this);
 
     }
 
@@ -138,7 +156,7 @@ public class AddSubActivity extends AppCompatActivity
 
         else
         {
-            Payments paymentOne = new Payments("payment" + curNum, name.getText().toString(), amount.getText().toString(), yearOne, monthOne, dateOne);
+            Subscription paymentOne = new Subscription("Sub" + curNum, name.getText().toString(), amount.getText().toString(), false, currentPaymentOne);
             curNum++;
             getCurrentSubs();
             paymentsList.add(paymentOne);
@@ -159,10 +177,7 @@ public class AddSubActivity extends AppCompatActivity
 
     public void updateArray(ArrayList<Payments> arrayOne)
     {
-//        System.out.println(arrayOne);
-
         paymentsList = arrayOne;
-//        System.out.println(paymentsList);
 
     }
 
@@ -173,5 +188,61 @@ public class AddSubActivity extends AppCompatActivity
         startActivity(intent);
     }
 
+    @Override
+    public void onDateSet(DatePicker datePicker, int i, int i1, int i2)
+    {
+        Calendar calOne = Calendar.getInstance();
+        calOne.set(Calendar.YEAR, i);
+        calOne.set(Calendar.MONTH, i1);
+        calOne.set(Calendar.DAY_OF_MONTH, i2);
+        String year = String.valueOf(i);
+        yearOne = year;
+        String month = String.valueOf(i1);
+        monthOne = month;
+        String date = String.valueOf(i2);
+        dateOne = date;
+        String currentDay = DateFormat.getDateInstance(DateFormat.FULL).format(calOne.getTime());
+        TextView textView = findViewById(R.id.textView4);
+        textView.setText(currentDay);
+    }
 
+    public void updateArrayOne()
+    {
+        for(int num =0; num < paymentsList.size(); num++)
+        {
+            if(paymentsList.get(num) instanceof Subscription)
+            {
+                subList.add(paymentsList.get(num));
+            }
+        }
+    }
+
+
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l)
+    {
+        String text = adapterView.getItemAtPosition(i).toString();
+
+        currentPayment = text;
+
+        if(currentPayment.equals("Monthly"))
+        {
+            currentPaymentOne = "M";
+        }
+        if(currentPayment.equals("Quarterly"))
+        {
+            currentPaymentOne = "Q";
+
+        }
+        if(currentPayment.equals("Yearly"))
+        {
+            currentPaymentOne = "Y";
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView)
+    {
+
+    }
 }

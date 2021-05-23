@@ -1,5 +1,6 @@
 package com.example.ia_project_22;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
@@ -10,11 +11,25 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class AddBillActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener
 {
+
+    public FirebaseAuth mAuth;
+    public FirebaseUser mUser;
+    public FirebaseFirestore firestoreRef;
+    ArrayList<Payments> paymentsList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -34,6 +49,8 @@ public class AddBillActivity extends AppCompatActivity implements DatePickerDial
 
             }
         });
+        paymentsList = new ArrayList<>();
+
     }
 
 
@@ -53,5 +70,53 @@ public class AddBillActivity extends AppCompatActivity implements DatePickerDial
 
         TextView textView = findViewById(R.id.textView3);
         textView.setText(currentDay);
+    }
+
+    public void getCurrentSubs()
+    {
+
+        firestoreRef.collection("Users")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>()
+                {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task)
+                    {
+                        if (task.isSuccessful())
+                        {
+
+                            for (QueryDocumentSnapshot document : task.getResult())
+                            {
+                                ArrayList<Payments> currList = new ArrayList<>();
+
+                                User v = document.toObject(User.class);
+                                if (checkUser(v.getUid()))
+                                {
+                                    updateArray(v.getPayments());
+                                    break;
+                                }
+                            }
+
+                        } else
+                        {
+
+                        }
+                    }
+                });
+    }
+
+    public boolean checkUser(String id)
+    {
+        if (id.equals(mAuth.getUid()))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public void updateArray(ArrayList<Payments> arrayOne)
+    {
+
+        paymentsList = arrayOne;
     }
 }

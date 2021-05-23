@@ -7,5 +7,15 @@
         <item>Bills</item>
     </string-array>
 
+    <string-array name="paymentPeriod">
+        <item>Payment Period?</item>
+        <item>Monthly</item>
+        <item>Quarterly</item>
+        <item>Yearly</item>
+    </string-array>
+    <string name="title_activity_bottom">MainActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
 
 </resources>
